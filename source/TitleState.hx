@@ -2,7 +2,6 @@ package;
 
 import lime.system.System;
 import seedyrng.Seedy;
-import sys.FileSystem;
 import lime.app.Application;
 import openfl.Lib;
 import Discord.DiscordClient;
@@ -57,9 +56,6 @@ class TitleState extends MusicBeatState
 	{
 		// systools.Registry.setValue(systools.Registry.HKEY_CURRENT_USER, 'deez\\nuts\\gottem', 'score', "deeznutsgottem");
 		// systools.Registry.setValue(systools.Registry.HKEY_CURRENT_USER, 'deez\\nuts\\gottem', 'seed', Bitchom.int(0, 999999).string());
-		#if polymod
-		polymod.Polymod.init({modRoot: "mods", dirs: ['introMod']});
-		#end
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
 		setSeed = new Random(1, new Xorshift64Plus());
@@ -91,7 +87,7 @@ class TitleState extends MusicBeatState
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
 
-		if (FileSystem.exists(Paths.music('menu/classic')))
+		if (lime.utils.Assets.exists(Paths.music('menu/classic')))
 		{
 			FlxG.sound.playMusic(Paths.music('menu/classic'), 0);
 		}
@@ -476,6 +472,7 @@ class TitleState extends MusicBeatState
 
 	public static function restart()
 	{
+		#if sys
 		var os = Sys.systemName();
 		var args = "Test.hx";
 		var app = "";
@@ -500,5 +497,10 @@ class TitleState extends MusicBeatState
 		}
 		else
 			throw "Failed to restart bich";
+		#else
+		#if html5
+		js.Browser.location.reload(true);
+		#end
+		#end
 	}
 }

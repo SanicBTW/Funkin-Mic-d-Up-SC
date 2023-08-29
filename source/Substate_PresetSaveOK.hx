@@ -1,7 +1,9 @@
 package;
 
+#if sys
 import sys.io.File;
 import sys.FileSystem;
+#end
 import flixel.util.FlxTimer;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -81,6 +83,7 @@ class Substate_PresetSaveOK extends MusicBeatSubstate
 			default:
 		}
 
+		#if sys
 		if (FileSystem.exists(Paths.txt('easterEgg_Data/$eggText')))
 		{
 			resultText.text = File.getContent(Paths.txt('easterEgg_Data/$eggText'));
@@ -116,6 +119,7 @@ class Substate_PresetSaveOK extends MusicBeatSubstate
 
 			easterImage = true;
 		}
+		#end
 
 		if (easterImage)
 		{

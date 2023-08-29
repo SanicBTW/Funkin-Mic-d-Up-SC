@@ -12,6 +12,7 @@ import lime.utils.Assets as LimeAssets;
 import lime.utils.AssetLibrary;
 import lime.utils.AssetManifest;
 import haxe.io.Path;
+import ModifierVariables._modifiers;
 
 using StringTools;
 
@@ -135,12 +136,44 @@ class LoadingState extends MusicBeatState
 
 	static function getSongPath()
 	{
-		return Paths.inst(PlayState.SONG.song);
+		try
+		{
+			return switch(_modifiers.Vibe)
+			{
+				case 0.8:
+					Paths.instHIFI(PlayState.SONG.song);
+				case 1.2:
+					Paths.instLOFI(PlayState.SONG.song);
+				default:
+					Paths.inst(PlayState.SONG.song);
+			}
+		}
+		catch(ex)
+		{
+			trace(ex);
+			return "";
+		}
 	}
 
 	static function getVocalPath()
 	{
-		return Paths.voices(PlayState.SONG.song);
+		try
+		{
+			return switch(_modifiers.Vibe)
+			{
+				case 0.8:
+					Paths.voicesHIFI(PlayState.SONG.song);
+				case 1.2:
+					Paths.voicesLOFI(PlayState.SONG.song);
+				default:
+					Paths.voices(PlayState.SONG.song);
+			}
+		}
+		catch(ex)
+		{
+			trace(ex);
+			return "";
+		}
 	}
 
 	inline static public function loadAndSwitchState(target:FlxState, stopMusic = false)
@@ -151,14 +184,6 @@ class LoadingState extends MusicBeatState
 	static function getNextState(target:FlxState, stopMusic = false):FlxState
 	{
 		Paths.setCurrentLevel("week" + PlayState.storyWeek);
-		if (no != null || no != [])
-		{
-			for (i in 0...no.length)
-			{
-				FlxG.sound.cache(Paths.inst(no[i]));
-				FlxG.sound.cache(Paths.voices(no[i]));
-			}
-		}
 		#if NO_PRELOAD_ALL
 		var loaded = isSoundLoaded(getSongPath())
 			&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))

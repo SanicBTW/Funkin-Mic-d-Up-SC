@@ -2,8 +2,9 @@ package;
 
 import flixel.tweens.FlxTween;
 import openfl.media.Sound;
-import sys.FileSystem;
+#if sys
 import sys.io.File;
+#end
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxState;
 import flixel.FlxG;
@@ -27,7 +28,11 @@ using StringTools;
 
 class VideoState extends MusicBeatState
 {
+	#if cpp
 	static private var nativeFramecount:String->Int = cpp.Lib.load("webmHelper", "GetFramecount", 1);
+	#else
+	static private var nativeFramecount:String->Int = function(file:String){return 0;};
+	#end
 
 	public var filePath:String;
 	public var _load:FileReference;
@@ -67,7 +72,9 @@ class VideoState extends MusicBeatState
 		transClass = toTrans;
 		if (frameSkipLimit != -1 && GlobalVideo.isWebm)
 		{
+			#if webm
 			GlobalVideo.getWebm().webm.SKIP_STEP_LIMIT = frameSkipLimit;
+			#end
 		}
 
 		if (skip)
@@ -161,7 +168,7 @@ class VideoState extends MusicBeatState
 			GlobalVideo.get().play();
 		}
 
-		funnySprite = new FlxSprite().loadGraphic((cast(openfl.Lib.current.getChildAt(0), Main)).webmHandle.webm.bitmapData);
+		funnySprite = new FlxSprite()#if webm .loadGraphic( (cast(openfl.Lib.current.getChildAt(0), Main)).webmHandle.webm.bitmapData)#end;
 		funnySprite.setGraphicSize(FlxG.width, FlxG.height);
 		funnySprite.screenCenter();
 		add(txt);
@@ -257,8 +264,10 @@ class VideoState extends MusicBeatState
 		if (controls.RESET)
 		{
 			GlobalVideo.get().stop();
+			#if sys
 			File.copy('assets/videos/_backup/paint.webm', 'assets/videos/paint.webm');
 			File.copy('assets/videos/_backup/paint.ogg', 'assets/videos/paint.ogg');
+			#end
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
 			FlxG.switchState(new VideoState(file, transClass, -1, true, looping, loadWEBM));
@@ -379,6 +388,7 @@ class VideoState extends MusicBeatState
 			FlxG.log.add(webmName);
 
 			GlobalVideo.get().stop();
+			#if sys
 			if (webmName.toLowerCase() == 'paint')
 			{
 				File.copy('assets/videos/_backup/paint.webm', 'assets/videos/paint.webm');
@@ -389,6 +399,7 @@ class VideoState extends MusicBeatState
 				File.copy('mods/webms/' + webmName + '.webm', 'assets/videos/' + webmName.replace(webmName, 'paint.webm'));
 				File.copy('mods/webms/' + webmName + '.ogg', 'assets/videos/' + webmName.replace(webmName, 'paint.ogg'));
 			}
+			#end
 
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;

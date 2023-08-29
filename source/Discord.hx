@@ -1,5 +1,6 @@
 package;
 
+#if discord
 import Sys.sleep;
 import discord_rpc.DiscordRpc;
 
@@ -85,3 +86,16 @@ class DiscordClient
 		//trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
 	}
 }
+#else
+// To avoid having like 500 compilation conditionals
+class DiscordClient
+{
+	public function new() {}
+
+	public static function initialize() {}
+
+	public static function shutdown() {}
+
+	public static function changePresence(details:String, state:Null<String>, ?smallImageKey : String, ?hasStartTimestamp : Bool, ?endTimestamp: Float) {}
+}
+#end

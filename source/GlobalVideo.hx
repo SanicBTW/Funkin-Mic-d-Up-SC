@@ -6,7 +6,9 @@ import openfl.Lib;
 class GlobalVideo
 {
 	private static var video:VideoHandler;
+	#if webm
 	private static var webm:WebmHandler;
+	#end
 	public static var isWebm:Bool = false;
 	public static var isAndroid:Bool = false;
 	public static var daAlpha1:Float = 0.2;
@@ -22,6 +24,7 @@ class GlobalVideo
 		return video;
 	}
 	
+	#if webm
 	public static function setWebm(vid:WebmHandler):Void
 	{
 		webm = vid;
@@ -32,15 +35,17 @@ class GlobalVideo
 	{
 		return webm;
 	}
+	#end
 	
 	public static function get():Dynamic
 	{
+		#if webm
 		if (isWebm)
 		{
 			return getWebm();
-		} else {
+		} else #else {
 			return getVid();
-		}
+		} #end
 	}
 	
 	public static function calc(ind:Int):Dynamic

@@ -1,7 +1,5 @@
 package;
 
-import sys.io.File;
-import sys.FileSystem;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.util.FlxTimer;
 import flixel.tweens.FlxEase;
@@ -129,18 +127,7 @@ class MenuEndless extends MusicBeatState
 		});
 
 		if (!FlxG.sound.music.playing)
-		{
-			if (FileSystem.exists(Paths.music('menu/' + _variables.music)))
-			{
-				FlxG.sound.playMusic(Paths.music('menu/' + _variables.music), _variables.mvolume / 100);
-				Conductor.changeBPM(Std.parseFloat(File.getContent('assets/music/menu/' + _variables.music + '_BPM.txt')));
-			}
-			else
-			{
-				FlxG.sound.playMusic(Paths.music('freakyMenu'), _variables.mvolume / 100);
-				Conductor.changeBPM(102);
-			}
-		}
+			Main.checkMusic();
 
 		super.create();
 	}
@@ -216,7 +203,6 @@ class MenuEndless extends MusicBeatState
 
 	function changeSelection(change:Int = 0)
 	{
-		// NGio.logEvent('Fresh');
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4 * _variables.svolume / 100);
 
 		curSelected += change;

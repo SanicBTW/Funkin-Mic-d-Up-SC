@@ -1,6 +1,5 @@
 package;
 
-import sys.FileSystem;
 import flixel.util.FlxTimer;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -41,7 +40,7 @@ class Marathon_Substate extends MusicBeatSubstate
         blackBarThingie.scale.x = 0;
         FlxTween.tween(blackBarThingie, { 'scale.x': 300}, 0.5, { ease: FlxEase.expoOut});
 
-        presets = FileSystem.readDirectory('presets/marathon');
+        presets = ['current'];
         presets.remove('current');
 
         trace(presets);

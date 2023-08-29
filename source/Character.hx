@@ -2,7 +2,6 @@ package;
 
 import openfl.display.InteractiveObject;
 import flixel.FlxG;
-import cpp.abi.Abi;
 import openfl.display3D.textures.Texture;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;

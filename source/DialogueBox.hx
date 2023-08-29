@@ -1,7 +1,6 @@
 package;
 
 import haxe.Json;
-import sys.io.File;
 import flixel.math.FlxMath;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -166,7 +165,7 @@ class DialogueBox extends FlxSpriteGroup
 
 		if (curBox != null)
 		{
-			var data:String = File.getContent(Paths.json('dialogueBoxes/' + curBox));
+			var data:String = lime.utils.Assets.getText(Paths.json('dialogueBoxes/' + curBox));
 			_dialogue = Json.parse(data);
 		}
 
@@ -425,7 +424,7 @@ class DialogueBox extends FlxSpriteGroup
 			box.screenCenter(X);
 			box.y = 710 - box.height;
 
-			var data:String = File.getContent(Paths.json('dialogueBoxes/' + curBox));
+			var data:String = lime.utils.Assets.getText(Paths.json('dialogueBoxes/' + curBox));
 			_dialogue = Json.parse(data);
 
 			box.y += _dialogue.addY;

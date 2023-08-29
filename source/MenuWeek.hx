@@ -1,7 +1,5 @@
 package;
 
-import sys.io.File;
-import sys.FileSystem;
 import flixel.tweens.FlxEase;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -86,21 +84,8 @@ class MenuWeek extends MusicBeatState
 		transOut = FlxTransitionableState.defaultTransOut;
 
 		if (FlxG.sound.music != null)
-		{
 			if (!FlxG.sound.music.playing)
-			{
-				if (FileSystem.exists(Paths.music('menu/' + _variables.music)))
-				{
-					FlxG.sound.playMusic(Paths.music('menu/' + _variables.music), _variables.mvolume / 100);
-					Conductor.changeBPM(Std.parseFloat(File.getContent('assets/music/menu/' + _variables.music + '_BPM.txt')));
-				}
-				else
-				{
-					FlxG.sound.playMusic(Paths.music('freakyMenu'), _variables.mvolume / 100);
-					Conductor.changeBPM(102);
-				}
-			}
-		}
+				Main.checkMusic();
 
 		persistentUpdate = persistentDraw = true;
 

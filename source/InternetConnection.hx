@@ -4,6 +4,7 @@ import haxe.io.Error;
 /**
  * This class checks for internet connectivity to avoid some confusion with haxe's built in http processor.
 **/
+// What the fuck the only class that has js support 
 class InternetConnection
 {
 	/**
@@ -66,7 +67,7 @@ class InternetConnection
 		catch (e:Error)
 		{
 			trace('OFFLINE BITCH');
-			return false;
+			return #if !js false #end;
 		}
 	}
 }

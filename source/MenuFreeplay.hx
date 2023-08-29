@@ -54,7 +54,7 @@ class MenuFreeplay extends MusicBeatState
 	];
 	var rank:FlxSprite = new FlxSprite(0).loadGraphic(Paths.image('rankings/NA'));
 
-	private var vocals:FlxSound;
+	private var vocals:FlxSound = new FlxSound();
 
 	var navi:FlxSprite;
 
@@ -70,13 +70,14 @@ class MenuFreeplay extends MusicBeatState
 			songs.push(new SongMetadata(data[0], Std.parseInt(data[2]), data[1], data[3], data[4], data[5]));
 		}
 
-		/* 
-			if (FlxG.sound.music != null)
-			{
-				if (!FlxG.sound.music.playing)
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-			}
-		 */
+		#if html5
+		// NO PRELOADING ON HTML5!
+		if (FlxG.sound.music != null)
+		{
+			if (!FlxG.sound.music.playing)
+				Main.checkMusic();
+		}
+		#end
 
 		var isDebug:Bool = false;
 
@@ -276,6 +277,7 @@ class MenuFreeplay extends MusicBeatState
 
 		persistentUpdate = persistentDraw = true;
 
+		#if PRELOAD_ALL
 		if (FlxG.sound.music.volume < 0.7 * _variables.mvolume / 100)
 		{
 			FlxG.sound.music.volume += 0.5 * _variables.mvolume / 100 * FlxG.elapsed;
@@ -285,6 +287,7 @@ class MenuFreeplay extends MusicBeatState
 		{
 			vocals.volume += 0.5 * _variables.vvolume / 100 * FlxG.elapsed;
 		}
+		#end
 
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, 0.5 / (_variables.fps / 60)));
 
@@ -443,7 +446,6 @@ class MenuFreeplay extends MusicBeatState
 
 	function changeSelection(change:Int = 0)
 	{
-		// NGio.logEvent('Fresh');
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4 * _variables.svolume / 100);
 
 		curSelected += change;
@@ -474,6 +476,8 @@ class MenuFreeplay extends MusicBeatState
 		#end
 
 		#if PRELOAD_ALL
+		// the fuck is this
+		FlxG.sound.music.stop();
 		if (_modifiers.VibeSwitch)
 		{
 			switch (_modifiers.Vibe)
@@ -488,9 +492,6 @@ class MenuFreeplay extends MusicBeatState
 		}
 		else
 			FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
-		#end
-
-		FlxG.sound.music.stop();
 
 		if (_modifiers.VibeSwitch)
 		{
@@ -529,6 +530,7 @@ class MenuFreeplay extends MusicBeatState
 			FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
 
 		vocals.play();
+		#end
 
 		var bullShit:Int = 0;
 

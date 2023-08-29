@@ -1,7 +1,5 @@
 package;
 
-import sys.io.File;
-import sys.FileSystem;
 import Discord.DiscordClient;
 import flixel.FlxSubState;
 import flixel.text.FlxText;
@@ -300,16 +298,7 @@ class PAGE2settings extends MusicBeatSubstate
 
 				_variables.music = MainVariables.musicList[mus];
 
-				if (FileSystem.exists(Paths.music('menu/' + _variables.music)))
-				{
-					FlxG.sound.playMusic(Paths.music('menu/' + _variables.music), _variables.mvolume / 100);
-					Conductor.changeBPM(Std.parseFloat(File.getContent('assets/music/menu/' + _variables.music + '_BPM.txt')));
-				}
-				else
-				{
-					FlxG.sound.playMusic(Paths.music('freakyMenu'), _variables.mvolume / 100);
-					Conductor.changeBPM(102);
-				}
+				Main.checkMusic();
 			case "hitsound":
 				hit += Change;
 				if (hit > MainVariables.hitList.length - 1)

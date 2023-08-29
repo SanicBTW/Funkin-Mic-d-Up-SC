@@ -1,7 +1,5 @@
 package;
 
-import sys.FileSystem;
-import sys.io.File;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.system.FlxSound;
@@ -18,8 +16,8 @@ class RankingSubstate extends MusicBeatSubstate
 
 	var rank:FlxSprite = new FlxSprite(-200, 730);
 	var combo:FlxSprite = new FlxSprite(-200, 730);
-	var comboRank:String = "N/A";
-	var ranking:String = "N/A";
+	var comboRank:String = "NA";
+	var ranking:String = "NA";
 	var rankingNum:Int = 15;
 
 	public function new(x:Float, y:Float)
@@ -28,8 +26,11 @@ class RankingSubstate extends MusicBeatSubstate
 
 		generateRanking();
 
-		var image = lime.graphics.Image.fromFile('assets/images/iconOG.png');
+		#if sys
+		@:privateAccess
+		var image = lime.graphics.Image.fromBitmapData(Paths.getImagePath('images/iconOG.png'));
 		lime.app.Application.current.window.setIcon(image);
+		#end
 
 		if (!PlayState.cheated && !_variables.botplay)
 			Highscore.saveRank(PlayState.SONG.song, rankingNum, PlayState.storyDifficulty);
@@ -132,16 +133,7 @@ class RankingSubstate extends MusicBeatSubstate
 				case "Story":
 					if (PlayState.storyPlaylist.length <= 0)
 					{
-						if (FileSystem.exists(Paths.music('menu/' + _variables.music)))
-						{
-							FlxG.sound.playMusic(Paths.music('menu/' + _variables.music), _variables.mvolume / 100);
-							Conductor.changeBPM(Std.parseFloat(File.getContent('assets/music/menu/' + _variables.music + '_BPM.txt')));
-						}
-						else
-						{
-							FlxG.sound.playMusic(Paths.music('freakyMenu'), _variables.mvolume / 100);
-							Conductor.changeBPM(102);
-						}
+						Main.checkMusic();
 
 						FlxG.switchState(new MenuWeek());
 					}

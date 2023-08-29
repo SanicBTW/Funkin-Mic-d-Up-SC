@@ -2,8 +2,6 @@ package;
 
 import openfl.Lib;
 import flixel.util.FlxSave;
-import sys.FileSystem;
-import sys.io.File;
 #if desktop
 import Discord.DiscordClient;
 #end

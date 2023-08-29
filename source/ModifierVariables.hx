@@ -1,8 +1,7 @@
 package;
 
+import hxkv.Hxkv;
 import haxe.Json;
-import sys.io.File;
-import sys.FileSystem;
 
 typedef ModiVariables =
 {
@@ -75,6 +74,10 @@ typedef ModiVariables =
 
 class ModifierVariables
 {
+    private static var _db:Hxkv = new Hxkv('presets');
+
+    // will prob throw an error trying to access the thing before creating shit
+    public static var presets:Array<String> = getPresets();
     public static var _modifiers:ModiVariables;
 
     public static function updateModifiers():Void
@@ -187,33 +190,27 @@ class ModifierVariables
 
     public static function saveCurrent():Void
     {
-
-        if (!FileSystem.isDirectory('presets/modifiers'))
-            FileSystem.createDirectory('presets/modifiers');
-
-        File.saveContent(('presets/modifiers/current'), Json.stringify(_modifiers, null, '    '));
+        _db.set("current", Json.stringify(_modifiers));
     }
 
     public static function savePreset(input:String):Void
-        {
-            File.saveContent(('presets/modifiers/'+input), Json.stringify(_modifiers, null, '    ')); //just an example for now
-        }
+    {
+        _db.set(input, Json.stringify(_modifiers));
+        if (presets.indexOf(input) == -1) // if it doesnt exist (when doing indexof, if the search isnt found in the array returns -1)
+            presets.push(input);
+        _db.set('presetsar', presets);
+    }
 
     public static function loadPreset(input:String):Void
     {
-        var data:String = File.getContent('presets/modifiers/'+input);
-        _modifiers = Json.parse(data);
-        
+        _modifiers = Json.parse(_db.get(input));
         replaceValues();
     }
 
     public static function loadCurrent():Void
     {
-        if (FileSystem.exists('presets/modifiers/current'))
-        {
-            var data:String = File.getContent('presets/modifiers/current');
-            _modifiers = Json.parse(data);
-        }
+        if (_db.get("current") != null)
+            _modifiers = Json.parse(_db.get("current"));
 
         replaceValues();
     }
@@ -379,5 +376,16 @@ class ModifierVariables
         ];
 
         updateModifiers();
+    }
+
+    private static function getPresets():Array<String>
+    {
+        var retPresets:Array<String> = ["current"];
+        var savedPresets:Array<String> = _db.get("presetsar");
+        trace(savedPresets);
+
+        // push saved presets to return presets
+
+        return retPresets;
     }
 }

@@ -1,6 +1,6 @@
 package;
 
-import sys.FileSystem;
+import lime.utils.Assets;
 import flixel.FlxSprite;
 import MainVariables._variables;
 
@@ -25,7 +25,7 @@ class HealthIcon extends FlxSprite
 	{
 		super();
 
-		if (FileSystem.exists('assets/shared/images/icons/$style/icon-' + char + '.png') || FileSystem.exists('mods/mainMods/_append/shared/images/icons/$style/icon-' + char + '.png'))
+		if (Assets.exists('assets/shared/images/icons/$style/icon-' + char + '.png') #if sys || FileSystem.exists('mods/mainMods/_append/shared/images/icons/$style/icon-' + char + '.png') #end)
 		{
 			loadGraphic(Paths.image('icons/$style/icon-' + char, 'shared'), true, 150, 150);
 

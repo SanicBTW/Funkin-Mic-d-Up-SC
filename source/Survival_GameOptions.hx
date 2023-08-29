@@ -1,9 +1,10 @@
 package;
 
-import cpp.abi.Abi;
 import haxe.Json;
+#if sys
 import sys.io.File;
 import sys.FileSystem;
+#end
 import flixel.util.FlxTimer;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -321,6 +322,7 @@ class Survival_GameOptions extends MusicBeatSubstate
 
     public static function load()
     {
+        #if sys
         if (!FileSystem.isDirectory('presets'))
             FileSystem.createDirectory('presets');
 
@@ -341,10 +343,22 @@ class Survival_GameOptions extends MusicBeatSubstate
                 var data:String = File.getContent('presets/survival_options');
                 _survivalVars = Json.parse(data);
             }
+            #else
+            // defaults
+            _survivalVars = {
+                timePercentage: 60,
+                carryTime: true,
+                addTimeMultiplier: 1,
+                subtractTimeMultiplier: 1,
+                addSongTimeToCurrentTime: true
+            };
+            #end
     }
 
     public static function save()
         {
+            #if sys
             File.saveContent(('presets/survival_options'), Json.stringify(_survivalVars, null, '    '));
+            #end
         }
 }

@@ -1,8 +1,10 @@
 package;
 
 import haxe.Json;
+#if sys
 import sys.io.File;
 import sys.FileSystem;
+#end
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.util.FlxTimer;
 import flixel.tweens.FlxEase;
@@ -160,18 +162,7 @@ class MenuMarathon extends MusicBeatState
 		});
 
 		if (!FlxG.sound.music.playing)
-		{
-			if (FileSystem.exists(Paths.music('menu/' + _variables.music)))
-			{
-				FlxG.sound.playMusic(Paths.music('menu/' + _variables.music), _variables.mvolume / 100);
-				Conductor.changeBPM(Std.parseFloat(File.getContent('assets/music/menu/' + _variables.music + '_BPM.txt')));
-			}
-			else
-			{
-				FlxG.sound.playMusic(Paths.music('freakyMenu'), _variables.mvolume / 100);
-				Conductor.changeBPM(102);
-			}
-		}
+			Main.checkMusic();
 
 		super.create();
 
@@ -289,7 +280,6 @@ class MenuMarathon extends MusicBeatState
 
 	function changeSelection(change:Int = 0)
 	{
-		// NGio.logEvent('Fresh');
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4 * _variables.svolume / 100);
 
 		curSelected += change;
@@ -325,6 +315,7 @@ class MenuMarathon extends MusicBeatState
 
 	function loadCurrent()
 	{
+		#if sys
 		if (!FileSystem.isDirectory('presets/marathon'))
 			FileSystem.createDirectory('presets/marathon');
 
@@ -344,6 +335,13 @@ class MenuMarathon extends MusicBeatState
 			PlayState.difficultyPlaylist = _marathon.songDifficulties;
 			PlayState.storyPlaylist = _marathon.songNames;
 		}
+		#else
+		// defaults
+		_marathon = {
+			songDifficulties: [],
+			songNames: []
+		}
+		#end
 	}
 
 	public static function saveCurrent()
@@ -352,13 +350,17 @@ class MenuMarathon extends MusicBeatState
 			songDifficulties: PlayState.difficultyPlaylist,
 			songNames: PlayState.storyPlaylist
 		}
+		#if sys
 		File.saveContent(('presets/marathon/current'), Json.stringify(_marathon, null, '    '));
+		#end
 	}
 
 	public static function loadPreset(input:String):Void
 	{
+		#if sys
 		var data:String = File.getContent('presets/marathon/' + input);
 		_marathon = Json.parse(data);
+		#end
 
 		PlayState.difficultyPlaylist = _marathon.songDifficulties;
 		PlayState.storyPlaylist = _marathon.songNames;
@@ -372,7 +374,9 @@ class MenuMarathon extends MusicBeatState
 			songDifficulties: PlayState.difficultyPlaylist,
 			songNames: PlayState.storyPlaylist
 		}
+		#if sys
 		File.saveContent(('presets/marathon/' + input), Json.stringify(_marathon, null, '    ')); // just an example for now
+		#end
 	}
 }
 

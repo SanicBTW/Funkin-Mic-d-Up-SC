@@ -100,8 +100,6 @@ class Survival_Edit extends MusicBeatSubstate
 
     function changeSelection(change:Int = 0)
         {
-    
-            // NGio.logEvent('Fresh');
             FlxG.sound.play(Paths.sound('scrollMenu'), 0.4*_variables.svolume/100);
     
             curSelected += change;

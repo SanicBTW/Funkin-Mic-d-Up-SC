@@ -15,13 +15,6 @@ class FirstCheckState extends MusicBeatState
 	{
 		FlxG.mouse.visible = false;
 
-		NGio.noLogin(APIStuff.API);
-
-		#if ng
-		var ng:NGio = new NGio(APIStuff.API, APIStuff.EncKey);
-		trace('NEWGROUNDS LOL');
-		#end
-
 		PlayerSettings.init();
 		ModifierVariables.modifierSetup();
 		ModifierVariables.loadCurrent();
@@ -35,6 +28,7 @@ class FirstCheckState extends MusicBeatState
 
 	override public function update(elapsed:Float)
 	{
+		#if sys
 		if (InternetConnection.isAvailable() && !isDebug)
 		{
 			var http = new haxe.Http("https://raw.githubusercontent.com/Verwex/Funkin-Mic-d-Up-SC/main/versionShit.txt");
@@ -83,15 +77,24 @@ class FirstCheckState extends MusicBeatState
 			// FlxG.sound.play(Paths.music('titleShoot'), 0.7);
 		}
 		else
+		#else
 		{
+			#if sys 
 			trace('fucking offline noob');
+			#end
 			switch (_variables.firstTime)
 			{
 				case true:
 					FlxG.switchState(new FirstTimeState()); // First time language setting
 				case false:
-					FlxG.switchState(new VideoState('paint', new TitleState(), -1, false)); // First time language setting
+					// cuz webm is broken and not working just go to the title state
+
+					#if sys FlxG.switchState(new VideoState('paint', new TitleState(), -1, false)); // First time language setting 
+					#else
+					FlxG.switchState(new TitleState()); // First time language setting
+					#end
 			}
 		}
+		#end
 	}
 }

@@ -1,8 +1,10 @@
 package;
 
 import haxe.Json;
+#if sys
 import sys.io.File;
 import sys.FileSystem;
+#end
 import flixel.util.FlxTimer;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -308,6 +310,7 @@ class Endless_Substate extends MusicBeatSubstate
 
     public static function loadCurrent(songTitle:String, difficulty:Int)
     {
+        #if sys
         if (!FileSystem.isDirectory('presets/endless'))
             FileSystem.createDirectory('presets/endless');
 
@@ -320,10 +323,13 @@ class Endless_Substate extends MusicBeatSubstate
                 var data:String = File.getContent('presets/endless/'+songTitle+'_'+difficulty);
                 _endless = Json.parse(data);
             }
+        #end
     }
 
     public static function saveCurrent(songTitle:String, difficulty:Int)
         {
+            #if sys
             File.saveContent(('presets/endless/'+songTitle+'_'+difficulty), Json.stringify(_endless, null, '    '));
+            #end
         }
 }

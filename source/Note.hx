@@ -1,7 +1,6 @@
 package;
 
 import flixel.FlxG;
-import sys.io.File;
 import openfl.utils.ByteArray;
 import openfl.display.BitmapData;
 import flixel.tweens.FlxEase;
@@ -10,9 +9,6 @@ import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
-#if polymod
-import polymod.format.ParseRules.TargetSignatureElement;
-#end
 import ModifierVariables._modifiers;
 import MainVariables._variables;
 

@@ -1,11 +1,9 @@
 package;
 
-import cpp.abi.Abi;
+import lime.utils.Assets;
 import lime.graphics.Image;
 import lime.app.Application;
-import sys.FileSystem;
 import Discord.DiscordClient;
-import sys.io.File;
 import LoopState;
 import Section.SwagSection;
 import Song.SwagSong;
@@ -40,6 +38,11 @@ import hscript.plus.ScriptState;
 
 using StringTools;
 using Std;
+
+#if sys
+import sys.FileSystem;
+import sys.io.File;
+#end
 
 class PlayState extends MusicBeatState
 {
@@ -379,9 +382,10 @@ class PlayState extends MusicBeatState
 		else if (_modifiers.Perfect || _modifiers.BadTrip || _modifiers.ShittyEnding || _modifiers.TruePerfect)
 			dialogueSuffix = "-perfect";
 
-		if (FileSystem.exists(Paths.txt(SONG.song.toLowerCase() + '/dialogue$dialogueSuffix')))
+		// why not just use coolutil.textfile thingy lol
+		if (Assets.exists(Paths.txt(SONG.song.toLowerCase() + '/dialogue$dialogueSuffix')))
 		{
-			dialogue = File.getContent(Paths.txt(SONG.song.toLowerCase() + '/dialogue$dialogueSuffix')).trim().split('\n');
+			dialogue = Assets.getText(Paths.txt(SONG.song.toLowerCase() + '/dialogue$dialogueSuffix')).trim().split('\n');
 
 			for (i in 0...dialogue.length)
 			{
@@ -1588,7 +1592,7 @@ class PlayState extends MusicBeatState
 				{
 					item.x -= 50;
 				}
-				if (FileSystem.exists('assets/data/' + SONG.song.toLowerCase() + '/scripts/chart.hx'))
+				if (Assets.exists('assets/data/' + SONG.song.toLowerCase() + '/scripts/chart.hx'))
 				{
 					modState.set("strum0", strumLineNotes.members[0]);
 					modState.set("strum1", strumLineNotes.members[1]);
@@ -1601,7 +1605,7 @@ class PlayState extends MusicBeatState
 					modState.set("strum8", strumLineNotes.members[8]);
 					modState.set("strum9", strumLineNotes.members[9]);
 					hscript();
-					if (FileSystem.exists('assets/data/' + SONG.song.toLowerCase() + '/scripts/start.hx'))
+					if (Assets.exists('assets/data/' + SONG.song.toLowerCase() + '/scripts/start.hx'))
 						loadStartScript();
 					trace('SOME MODIFIERS ARE DISABLED! THEY WONT WORK PROPERLY WITH MODCHARTS');
 				}
@@ -1611,7 +1615,7 @@ class PlayState extends MusicBeatState
 				if (_variables.scroll != 'left' && _variables.scroll != 'right')
 					generateStaticArrows(0);
 				generateStaticArrows(1);
-				if (FileSystem.exists('assets/data/' + SONG.song.toLowerCase() + '/scripts/chart.hx'))
+				if (Assets.exists('assets/data/' + SONG.song.toLowerCase() + '/scripts/chart.hx'))
 				{
 					modState.set("strum0", strumLineNotes.members[0]);
 					modState.set("strum1", strumLineNotes.members[1]);
@@ -1622,7 +1626,7 @@ class PlayState extends MusicBeatState
 					modState.set("strum6", strumLineNotes.members[6]);
 					modState.set("strum7", strumLineNotes.members[7]);
 					hscript();
-					if (FileSystem.exists('assets/data/' + SONG.song.toLowerCase() + '/scripts/start.hx'))
+					if (Assets.exists('assets/data/' + SONG.song.toLowerCase() + '/scripts/start.hx'))
 						loadStartScript();
 					trace('SOME MODIFIERS ARE DISABLED! THEY WONT WORK PROPERLY WITH MODCHARTS');
 				}
@@ -1932,6 +1936,7 @@ class PlayState extends MusicBeatState
 		{
 			var coolSection:Int = Std.int(section.lengthInSteps / 4);
 
+			#if sys
 			// I don't know why, I don't want to wonder why,
 			// but i have no idea what better way I can do this cos I fucking hate it.
 			if (section.sectionSpeed < 1 || Math.isNaN(section.sectionSpeed))
@@ -1956,6 +1961,7 @@ class PlayState extends MusicBeatState
 					break;
 				}
 			}
+			#end
 
 			for (songNotes in section.sectionNotes)
 			{
@@ -2767,7 +2773,7 @@ class PlayState extends MusicBeatState
 		/**
 		 * it lags a lil so its only if you dont have a choice
 		**/
-		if (FileSystem.exists('assets/data/' + SONG.song.toLowerCase() + '/scripts/chart.hx') && startedCountdown)
+		if (Assets.exists('assets/data/' + SONG.song.toLowerCase() + '/scripts/chart.hx') && startedCountdown)
 		{
 			loadScript();
 		}
@@ -2833,8 +2839,11 @@ class PlayState extends MusicBeatState
 			canDie = false;
 			FlxG.switchState(new ChartingState());
 			curDeaths = 0;
-			var image = lime.graphics.Image.fromFile('assets/images/iconOG.png');
+			#if sys
+			@:privateAccess
+			var image = lime.graphics.Image.fromBitmapData(Paths.getImagePath('images/iconOG.png'));
 			lime.app.Application.current.window.setIcon(image);
+			#end
 			Application.current.window.title = Application.current.meta.get('name');
 
 			DiscordClient.changePresence("Charting a song", null, null, true);
@@ -3792,7 +3801,6 @@ class PlayState extends MusicBeatState
 
 					if (SONG.validScore && !cheated && !_variables.botplay)
 					{
-						NGio.unlockMedal(60961);
 						Highscore.saveWeekScore(storyWeek, campaignScore, storyDifficulty);
 					}
 
@@ -5454,13 +5462,15 @@ class PlayState extends MusicBeatState
 	**/
 	public function hscript()
 	{
-		if (FileSystem.exists('assets/data/' + SONG.song.toLowerCase() + '/scripts/chart.hx'))
+		if (Assets.exists('assets/data/' + SONG.song.toLowerCase() + '/scripts/chart.hx'))
 		{
 			// sets most of the variables
 			modState.set("FlxSprite", flixel.FlxSprite);
 			modState.set("FlxTimer", FlxTimer);
-			modState.set("File", sys.io.File);
+			#if sys
+			modState.set("File", File);
 			modState.set("fs", FileSystem);
+			#end
 			modState.set("Math", Math);
 			modState.set("Std", Std);
 			modState.set("FlxTween", FlxTween);
@@ -5498,12 +5508,12 @@ class PlayState extends MusicBeatState
 
 	public function loadScript()
 	{
-		modState.executeString(File.getContent('assets/data/' + SONG.song.toLowerCase() + '/scripts/chart.hx'));
+		modState.executeString(Assets.getText('assets/data/' + SONG.song.toLowerCase() + '/scripts/chart.hx'));
 	}
 
 	public function loadStartScript()
 	{
-		modState.executeString(File.getContent('assets/data/' + SONG.song.toLowerCase() + '/scripts/start.hx'));
+		modState.executeString(Assets.getText('assets/data/' + SONG.song.toLowerCase() + '/scripts/start.hx'));
 	}
 
 	public function addObject(object:flixel.FlxBasic) // fallback

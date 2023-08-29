@@ -1,6 +1,5 @@
 package;
 
-import sys.io.File;
 import flixel.FlxG;
 import flixel.input.FlxInput;
 import flixel.input.actions.FlxAction;
@@ -609,22 +608,27 @@ class Controls extends FlxActionSet
 
 	static function loadControls()
 	{
-		if (FlxG.save.data.keyboardMap != null)
+		var keyMaps:Map<String, FlxKey> = FlxMacroUtil.buildMap("flixel.input.keyboard.FlxKey");
+
+		var controlsStrings:Array<String> = [];
+		@:privateAccess
+		var saveControls:String = MainVariables._db.get("controls");
+		if(saveControls != null)
 		{
-			keyboardMap = FlxG.save.data.keyboardMap;
+			var controlsArray:Array<String> = StringTools.trim(saveControls).split("\n");
+			for (i in 0...controlsArray.length)
+			{
+				controlsStrings[i] = StringTools.trim(controlsArray[i]);
+			}
 		}
 		else
+			controlsStrings = CoolUtil.coolTextFile('assets/data/defaultControls.txt'); // im lazy rn
+
+		keyboardMap = new Map();
+		for (i in 0...controlsStrings.length)
 		{
-			var keyMaps:Map<String, FlxKey> = FlxMacroUtil.buildMap("flixel.input.keyboard.FlxKey");
-
-			var controlsStrings = CoolUtil.coolTextFile('assets/data/defaultControls.txt'); // im lazy rn
-
-			keyboardMap = new Map();
-			for (i in 0...controlsStrings.length)
-			{
-				var elements:Array<String> = controlsStrings[i].split(',');
-				keyboardMap.set(elements[0], keyMaps[elements[1]]);
-			}
+			var elements:Array<String> = controlsStrings[i].split(',');
+			keyboardMap.set(elements[0], keyMaps[elements[1]]);
 		}
 	}
 
@@ -636,13 +640,11 @@ class Controls extends FlxActionSet
 			"UP", "DOWN", "LEFT", "RIGHT", "CENTER", "UP (ALTERNATE)", "DOWN (ALTERNATE)", "LEFT (ALTERNATE)", "RIGHT (ALTERNATE)", "CENTER (ALTERNATE)", "ACCEPT", "RESET", "BACK", "CHEAT",
 			"ACCEPT (ALTERNATE)", "RESET (ALTERNATE)", "BACK (ALTERNATE)", "CHEAT (ALTERNATE)"
 		];
-		FlxG.log.add('OK SO KEYMAPS ARE');
 		for (i in 0...shitass.length)
 		{
 			// instead of doing some fucky shit with key => value we use an array to help sort it
 			// that way it looks nice and clean :)
 			arr.push([shitass[i], keyboardMap.get(shitass[i]).toString()]);
-			FlxG.log.add(shitass[i] + ' AND ITS KEY IS ' + keyboardMap.get(shitass[i]).toString());
 		}
 		var name = StringTools.replace(arr.toString(), '[', '');
 		var name2 = StringTools.replace(name, ']', '');
@@ -652,8 +654,8 @@ class Controls extends FlxActionSet
 		{
 			name4 = StringTools.replace(name4, key + "\n" + value, key + "," + value);
 		}
-		File.saveContent('assets/data/defaultControls.txt', name4);
-		FlxG.save.flush();
+		@:privateAccess
+		MainVariables._db.set("controls", name4);
 	}
 
 	function removeKeyboard()

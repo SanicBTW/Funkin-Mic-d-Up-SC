@@ -1,6 +1,5 @@
 package;
 
-import sys.FileSystem;
 import flixel.util.FlxTimer;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -23,7 +22,7 @@ class Substate_Preset extends MusicBeatSubstate
 
     var camLerp:Float = 0.16;
 
-    public static var presets:Array<String>;
+    public static var presets:Array<String> = ModifierVariables.presets;
 
     var blackBarThingie:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, 1, FlxColor.BLACK);
 
@@ -36,7 +35,6 @@ class Substate_Preset extends MusicBeatSubstate
         blackBarThingie.scale.y = 0;
         FlxTween.tween(blackBarThingie, { 'scale.y': 230}, 0.5, { ease: FlxEase.expoOut});
 
-        presets = FileSystem.readDirectory('presets/modifiers');
         presets.remove('current');
 
         trace(presets);

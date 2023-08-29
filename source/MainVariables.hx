@@ -1,13 +1,17 @@
 package;
 
+import haxe.iterators.DynamicAccessKeyValueIterator;
 import lime.app.Application;
 import openfl.display.BlendMode;
 import haxe.Json;
 import flixel.FlxG;
+#if sys
 import sys.io.File;
 import sys.FileSystem;
+#end
 import openfl.filters.ColorMatrixFilter;
 import openfl.filters.BitmapFilter;
+import hxkv.Hxkv;
 
 using StringTools;
 
@@ -94,45 +98,46 @@ class MainVariables
 	public static var iconList:Array<String> = [];
 
 	public static var configVersion:String = '2.0.3';
+	public static var fileName:String = 'config-$configVersion';
+	private static var _db:Hxkv = new Hxkv(fileName);
 
 	public static function Save():Void
 	{
-		File.saveContent(('config-$configVersion.json'), Json.stringify(_variables, null, '    '));
+		_db.set('main', Json.stringify(_variables));
 	}
 
+	// READING ASSETS DIRECTORY METHODS ARE EXPERIMENTAL AND I DO NOT KNOW IF THEY WORK PROPERLY
 	public static function Load():Void
 	{
-		musicList = FileSystem.readDirectory('assets/music/menu');
+		musicList = Paths.getLibraryFiles("default", "SOUND", "assets/music/menu");
+		musicList = onlyNames(musicList);
 
-		hitList = FileSystem.readDirectory('assets/shared/sounds/hitsounds');
-		hitList.unshift('none.ogg');
+		// probably not loaded, will move to preload if it crashes - had to preload shared too lol
+		hitList = Paths.getLibraryFiles("shared", "SOUND", "assets/shared/sounds/hitsounds");
+		hitList.unshift('assets/shared/sounds/hitsounds/none.ogg');
+		hitList = onlyNames(hitList);
 
-		iconList = FileSystem.readDirectory('assets/shared/images/icons');
-		iconList.unshift('template.png');
+		// i only need the existing directories
+		// dumbass parsing
+		var bIconList:Array<String> = Paths.getLibraryFiles("shared", "IMAGE", "assets/shared/images/icons");
+		var i:Int = 0;
 
-		for (i in 0...musicList.length)
+		for (entry in bIconList)
 		{
-			if (musicList[i].contains('_BPM.txt'))
-				musicList.remove(musicList[i]);
+			var fixed:String = entry.replace("assets/shared/images/icons/", "");
+			fixed = fixed.substring(0, fixed.lastIndexOf("/"));
+			if (fixed.length <= 1)
+				continue;
+
+			if(iconList.indexOf(fixed) == -1)
+				iconList[i] = fixed;
+			else
+				continue;
+
+			i++;
 		}
 
-		for (i in 0...musicList.length)
-		{
-			musicList[i] = musicList[i].substring(0, musicList[i].length - 4);
-		}
-
-		for (i in 0...hitList.length)
-		{
-			hitList[i] = hitList[i].substring(0, hitList[i].length - 4);
-		}
-
-		for (i in 0...iconList.length)
-		{
-			if (iconList[i].contains('template.png'))
-				iconList.remove(iconList[i]);
-		}
-
-		if (!FileSystem.exists('config-$configVersion.json'))
+		if (_db.get("main") == null)
 		{
 			_variables = {
 				resolution: 1,
@@ -198,7 +203,7 @@ class MainVariables
 				hpColors: true,
 				hpIcons: true,
 				hpAnims: true,
-				iconStyle: iconList[iconList.length],
+				iconStyle: iconList[iconList.length - 1], // my guy would be getting null lmao
 				ghostTapping: true
 			};
 
@@ -208,8 +213,7 @@ class MainVariables
 		{
 			try
 			{
-				var data:String = File.getContent(('config-$configVersion.json'));
-				_variables = Json.parse(data);
+				_variables = Json.parse(_db.get("main"));
 			}
 			catch (error)
 			{
@@ -345,5 +349,17 @@ class MainVariables
 		];
 
 		filters.push(new ColorMatrixFilter(colorM));
+	}
+
+	private static function onlyNames(array:Array<String>):Array<String>
+	{
+		// copy for safety purposes
+		var copy:Array<String> = array;
+		for(entry in array)
+		{
+			copy[array.indexOf(entry)] = haxe.io.Path.withoutExtension(haxe.io.Path.withoutDirectory(entry));
+		}
+
+		return copy;
 	}
 }

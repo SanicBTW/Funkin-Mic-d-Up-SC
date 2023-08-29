@@ -1,9 +1,6 @@
 package;
 
-#if desktop
 import Discord.DiscordClient;
-#end
-
 import flixel.util.FlxTimer;
 import flixel.util.FlxGradient;
 import flixel.FlxG;

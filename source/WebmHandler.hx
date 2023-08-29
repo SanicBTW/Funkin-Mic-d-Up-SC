@@ -1,14 +1,13 @@
 package;
 
+#if webm
 import flixel.FlxG;
 import openfl.display.Sprite;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
 import openfl.utils.ByteArray;
 import sys.io.File;
-#if desktop
 import webm.*;
-#end
 
 class WebmHandler
 {
@@ -224,3 +223,4 @@ class WebmByteArray extends webm.WebmIo
 		return data.position;
 	}
 }
+#end

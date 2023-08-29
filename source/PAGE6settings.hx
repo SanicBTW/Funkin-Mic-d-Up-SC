@@ -1,7 +1,6 @@
 package;
 
 import openfl.Lib;
-import sys.FileSystem;
 import Discord.DiscordClient;
 import flixel.FlxSubState;
 import flixel.text.FlxText;
@@ -274,7 +273,8 @@ class PAGE6settings extends MusicBeatSubstate
                 FlxG.save.bind('save', "Funkin Mic'd Up");
             case 'config':
                 FlxG.sound.play(Paths.sound('confirmMenu'), _variables.svolume/100);
-                FileSystem.deleteFile('config.json');
+                @:privateAccess
+                MainVariables._db.fs.delete(MainVariables.fileName);
                 FlxG.sound.music.volume = 1;
                 FlxG.sound.playMusic(Paths.music('freakyMenu'), _variables.mvolume/100);
                 Conductor.changeBPM(102);
