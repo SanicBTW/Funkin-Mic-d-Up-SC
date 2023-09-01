@@ -37,8 +37,6 @@ class Substate_Preset extends MusicBeatSubstate
 
         presets.remove('current');
 
-        trace(presets);
-
         if (presets.length > 0)
             optionShit = ['clear', 'save', 'load'];
         else

@@ -1,5 +1,6 @@
 package;
 
+import flixel.graphics.FlxGraphic;
 import lime.app.Application;
 import Discord.DiscordClient;
 import flixel.util.FlxColor;
@@ -83,6 +84,9 @@ class Main extends Sprite
 		initialState = FirstCheckState;
 		#end
 
+		//might not be the best but i have to add cleaning functions and shit
+		// DO NOT DELETE, THIS IS NEEDED FOR FLX INPUT TEXT AND AVOID CRASHING BECAUSE OF IT
+		FlxGraphic.defaultPersist = true;
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
 		#if webm
