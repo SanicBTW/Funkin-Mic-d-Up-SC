@@ -204,8 +204,6 @@ class MenuControls extends MusicBeatState
 	{
 		if (FlxG.keys.pressed.ANY)
 		{
-			FlxG.sound.play(Paths.sound('confirmMenu'), _variables.svolume / 100);
-
 			// Checks all known keys
 			var keyMaps:Map<String, FlxKey> = FlxMacroUtil.buildMap("flixel.input.keyboard.FlxKey");
 			for (key in keyMaps.keys())

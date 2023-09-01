@@ -28,6 +28,7 @@ TODO:
 - GFX page crashes (FIXED)
 - settings seems to not save (FIXED - somehow)
 - controls not saving (FIXED - instead of using FlxSave it uses the MainVariables database)
+- explosive audio when changing keybinds (FIXED)
 
 - add marathon presets saving (substate, menu)
 - add survival presets saving (substate, game options, menu)
@@ -38,7 +39,6 @@ TODO:
 - better asset support (more libraries for better management)
 - song not loading when the library is cached??
 - blueballed count
-- explosive audio when changing keybinds
 
 LIBS NEEDED:
 - actuate: 1.9.0
@@ -52,7 +52,7 @@ LIBS NEEDED:
 - lime-samples: 7.0.0
 - lime: 7.9.0
 - openfl: 9.1.0
-- polymod: 1.3.1
+- polymod: 1.3.1 (removed)
 - random: 1.4.1
 - seedyrng: 1.1.0
 - systools: 1.1.0
