@@ -29,16 +29,20 @@ TODO:
 - settings seems to not save (FIXED - somehow)
 - controls not saving (FIXED - instead of using FlxSave it uses the MainVariables database)
 - explosive audio when changing keybinds (FIXED)
+- add modifier presets saving (DONE - fixed FlxInputText crashing for not having FlxGraphic.defaultPersist)
+- hide some settings to avoid breaking html5 (Settings affected: Framerate, Resolution, Fullscreen)
+- add marathon presets saving (DONE)
+- add survival presets saving (DONE)
+- add endless presets saving (DONE)
 
-- add marathon presets saving (substate, menu)
-- add survival presets saving (substate, game options, menu)
-- add endless presets saving (substate and menu)
 - when wanting to save content on some debug states, copy the text to the user clipboard and notify about it
-- some shit on substate preset save ok dunno
+- some shit on substate preset save ok dunno (easter eggs dunno)
 - actual video support from the amazing fps plus prob i aint gonna snatch the psych support
 - better asset support (more libraries for better management)
 - song not loading when the library is cached??
 - blueballed count
+- loading state crashing for animations shit
+- loading state not actually loading assets?!?!''1 (only for marathon, endless, survival)
 
 LIBS NEEDED:
 - actuate: 1.9.0

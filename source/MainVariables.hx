@@ -1,14 +1,9 @@
 package;
 
-import haxe.iterators.DynamicAccessKeyValueIterator;
 import lime.app.Application;
 import openfl.display.BlendMode;
 import haxe.Json;
 import flixel.FlxG;
-#if sys
-import sys.io.File;
-import sys.FileSystem;
-#end
 import openfl.filters.ColorMatrixFilter;
 import openfl.filters.BitmapFilter;
 import hxkv.Hxkv;

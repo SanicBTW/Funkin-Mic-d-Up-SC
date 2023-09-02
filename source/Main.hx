@@ -86,7 +86,7 @@ class Main extends Sprite
 
 		//might not be the best but i have to add cleaning functions and shit
 		// DO NOT DELETE, THIS IS NEEDED FOR FLX INPUT TEXT AND AVOID CRASHING BECAUSE OF IT
-		FlxGraphic.defaultPersist = true;
+		//FlxGraphic.defaultPersist = true;
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
 		#if webm

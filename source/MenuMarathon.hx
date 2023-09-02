@@ -1,10 +1,6 @@
 package;
 
 import haxe.Json;
-#if sys
-import sys.io.File;
-import sys.FileSystem;
-#end
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.util.FlxTimer;
 import flixel.tweens.FlxEase;
@@ -19,6 +15,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.addons.display.FlxBackdrop;
 import MainVariables._variables;
+import ModifierVariables._db;
 
 using StringTools;
 
@@ -315,33 +312,20 @@ class MenuMarathon extends MusicBeatState
 
 	function loadCurrent()
 	{
-		#if sys
-		if (!FileSystem.isDirectory('presets/marathon'))
-			FileSystem.createDirectory('presets/marathon');
-
-		if (!FileSystem.exists('presets/marathon/current'))
+		if (_db.get('current_marathon') != null)
+		{
+			_marathon = Json.parse(_db.get('current_marathon'));
+			PlayState.difficultyPlaylist = _marathon.songDifficulties;
+			PlayState.storyPlaylist = _marathon.songNames;
+		}
+		else 
 		{
 			_marathon = {
 				songDifficulties: [],
 				songNames: []
 			}
-
-			File.saveContent(('presets/marathon/current'), Json.stringify(_marathon, null, '    '));
+			_db.set('current_marathon', Json.stringify(_marathon));
 		}
-		else
-		{
-			var data:String = File.getContent('presets/marathon/current');
-			_marathon = Json.parse(data);
-			PlayState.difficultyPlaylist = _marathon.songDifficulties;
-			PlayState.storyPlaylist = _marathon.songNames;
-		}
-		#else
-		// defaults
-		_marathon = {
-			songDifficulties: [],
-			songNames: []
-		}
-		#end
 	}
 
 	public static function saveCurrent()
@@ -350,18 +334,12 @@ class MenuMarathon extends MusicBeatState
 			songDifficulties: PlayState.difficultyPlaylist,
 			songNames: PlayState.storyPlaylist
 		}
-		#if sys
-		File.saveContent(('presets/marathon/current'), Json.stringify(_marathon, null, '    '));
-		#end
+		_db.set('current_marathon', Json.stringify(_marathon));
 	}
 
 	public static function loadPreset(input:String):Void
 	{
-		#if sys
-		var data:String = File.getContent('presets/marathon/' + input);
-		_marathon = Json.parse(data);
-		#end
-
+		_marathon = Json.parse(_db.get('${input}_marathon'));
 		PlayState.difficultyPlaylist = _marathon.songDifficulties;
 		PlayState.storyPlaylist = _marathon.songNames;
 
@@ -374,9 +352,10 @@ class MenuMarathon extends MusicBeatState
 			songDifficulties: PlayState.difficultyPlaylist,
 			songNames: PlayState.storyPlaylist
 		}
-		#if sys
-		File.saveContent(('presets/marathon/' + input), Json.stringify(_marathon, null, '    ')); // just an example for now
-		#end
+		_db.set('${input}_marathon', Json.stringify(_marathon));
+		if (Marathon_Substate.presets.indexOf(input) == -1) // if it doesnt exist (when doing indexof, if the search isnt found in the array returns -1)
+            Marathon_Substate.presets.push(input);
+        _db.set('savedPresets_marathon', Marathon_Substate.presets);
 	}
 }
 

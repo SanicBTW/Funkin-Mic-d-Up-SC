@@ -1,5 +1,6 @@
 package;
 
+import flixel.graphics.FlxGraphic;
 import lime.app.Application;
 import lime.app.Event;
 import lime.system.System;
@@ -35,6 +36,9 @@ class Substate_PresetSave extends MusicBeatSubstate
 	public function new()
 	{
 		super();
+
+		// if it works dont change it - i will probably add persisting graphics once i add caching and shit lol
+		FlxGraphic.defaultPersist = true;
 
 		add(blackBarThingie);
 		blackBarThingie.scrollFactor.set();
@@ -98,6 +102,7 @@ class Substate_PresetSave extends MusicBeatSubstate
 		{
 			if (FlxG.keys.justPressed.ESCAPE)
 			{
+				FlxGraphic.defaultPersist = false;
 				goingBack = true;
 				FlxG.sound.play(Paths.sound('cancelMenu'), _variables.svolume / 100);
 				FlxTween.tween(blackBarThingie, {'scale.x': 0}, 0.5, {ease: FlxEase.expoIn});

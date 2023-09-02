@@ -23,7 +23,7 @@ class Survival_Substate extends MusicBeatSubstate
 
     var camLerp:Float = 0.16;
 
-    public static var presets:Array<String>;
+    public static var presets:Array<String> = ModifierVariables.getPresets(SURVIVAL);
 
     var blackBarThingie:FlxSprite = new FlxSprite().makeGraphic(1, FlxG.height, FlxColor.BLACK);
 
@@ -40,10 +40,7 @@ class Survival_Substate extends MusicBeatSubstate
         blackBarThingie.scale.x = 0;
         FlxTween.tween(blackBarThingie, { 'scale.x': 300}, 0.5, { ease: FlxEase.expoOut});
 
-        presets = ['current'];
-        presets.remove('current');
-
-        trace(presets);
+        presets.remove('current_survival');
 
         if (PlayState.storyPlaylist.length > 0)
             {

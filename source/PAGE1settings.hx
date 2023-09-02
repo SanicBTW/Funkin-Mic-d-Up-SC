@@ -21,7 +21,7 @@ class PAGE1settings extends MusicBeatSubstate
 {
 	var menuItems:FlxTypedGroup<FlxSprite>;
 	var optionShit:Array<String> = [
-		'page', 'resolution', 'fullscreen', 'fpsCounter', 'fps', 'memory', 'hue', 'brightness', 'gamma', 'filter', 'watermark'
+		'page', #if !html5 'resolution', 'fullscreen', #end 'fpsCounter', #if !html5 'fps', #end 'memory', 'hue', 'brightness', 'gamma', 'filter', 'watermark'
 	];
 
 	private var grpSongs:FlxTypedGroup<Alphabet>;

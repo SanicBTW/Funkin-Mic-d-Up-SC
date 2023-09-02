@@ -74,10 +74,11 @@ typedef ModiVariables =
 
 class ModifierVariables
 {
-    private static var _db:Hxkv = new Hxkv('presets');
+    @:noCompletion
+    public static var _db:Hxkv = new Hxkv('presets');
 
     // will prob throw an error trying to access the thing before creating shit
-    public static var presets:Array<String> = getPresets();
+    public static var presets:Array<String> = getPresets(MODIFIERS);
     public static var _modifiers:ModiVariables;
 
     public static function updateModifiers():Void
@@ -190,27 +191,27 @@ class ModifierVariables
 
     public static function saveCurrent():Void
     {
-        _db.set("current", Json.stringify(_modifiers));
+        _db.set("current_modifiers", Json.stringify(_modifiers));
     }
 
     public static function savePreset(input:String):Void
     {
-        _db.set(input, Json.stringify(_modifiers));
+        _db.set('${input}_modifiers', Json.stringify(_modifiers));
         if (presets.indexOf(input) == -1) // if it doesnt exist (when doing indexof, if the search isnt found in the array returns -1)
             presets.push(input);
-        _db.set('presetsar', presets);
+        _db.set('savedPresets_modifiers', presets);
     }
 
     public static function loadPreset(input:String):Void
     {
-        _modifiers = Json.parse(_db.get(input));
+        _modifiers = Json.parse(_db.get('${input}_modifiers'));
         replaceValues();
     }
 
     public static function loadCurrent():Void
     {
-        if (_db.get("current") != null)
-            _modifiers = Json.parse(_db.get("current"));
+        if (_db.get("current_modifiers") != null)
+            _modifiers = Json.parse(_db.get("current_modifiers"));
 
         replaceValues();
     }
@@ -378,14 +379,31 @@ class ModifierVariables
         updateModifiers();
     }
 
-    private static function getPresets():Array<String>
+    // All of the presets save into the same db for better management
+    public static function getPresets(type:PresetType):Array<String>
     {
-        var retPresets:Array<String> = ["current"];
-        var savedPresets:Array<String> = _db.get("presetsar");
-        trace(savedPresets);
+        var exclude:String = 'current_$type';
+        var basePresets:Array<String> = [exclude];
 
-        // push saved presets to return presets
+        var savedPresets:Array<String> = _db.get('savedPresets_$type');
+        if (savedPresets == null)
+            savedPresets = [];
+
+        // we dont want the current preset from saved
+        savedPresets.remove(exclude);
+
+        var retPresets:Array<String> = basePresets.concat(savedPresets);
+
+        trace('Returning $retPresets for $type');
 
         return retPresets;
     }
+}
+
+// Ordered by the menu
+enum abstract PresetType(String) to String
+{
+    var MARATHON = "marathon";
+    var SURVIVAL = "survival";
+    var MODIFIERS = "modifiers";
 }

@@ -35,7 +35,7 @@ class Substate_Preset extends MusicBeatSubstate
         blackBarThingie.scale.y = 0;
         FlxTween.tween(blackBarThingie, { 'scale.y': 230}, 0.5, { ease: FlxEase.expoOut});
 
-        presets.remove('current');
+        presets.remove('current_modifiers');
 
         if (presets.length > 0)
             optionShit = ['clear', 'save', 'load'];

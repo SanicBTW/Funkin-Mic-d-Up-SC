@@ -5,10 +5,6 @@ import flixel.util.FlxColor;
 import flixel.text.FlxText;
 import Discord.DiscordClient;
 import flixel.util.FlxTimer;
-#if sys
-import sys.io.File;
-import sys.FileSystem;
-#end
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxGradient;
@@ -17,6 +13,7 @@ import flixel.FlxG;
 import flixel.addons.display.FlxBackdrop;
 import flixel.FlxSprite;
 import MainVariables._variables;
+import ModifierVariables._db;
 
 using StringTools;
 
@@ -285,33 +282,20 @@ class MenuSurvival extends MusicBeatState
 
 	function loadCurrent()
 		{
-			#if sys
-			if (!FileSystem.isDirectory('presets/survival'))
-				FileSystem.createDirectory('presets/survival');
-	
-			if (!FileSystem.exists('presets/survival/current'))
+			if (_db.get('current_survival') != null)
+			{
+				_survival = Json.parse(_db.get('current_survival'));
+				PlayState.difficultyPlaylist = _survival.songDifficulties;
+				PlayState.storyPlaylist = _survival.songNames;
+			}
+			else
 			{
 				_survival = {
 					songDifficulties: [],
 					songNames: []
 				}
-	
-				File.saveContent(('presets/survival/current'), Json.stringify(_survival, null, '    '));
+				_db.set('current_survival', Json.stringify(_survival));
 			}
-			else
-			{
-				var data:String = File.getContent('presets/survival/current');
-				_survival = Json.parse(data);
-				PlayState.difficultyPlaylist = _survival.songDifficulties;
-				PlayState.storyPlaylist = _survival.songNames;
-			}
-			#else
-			// defaults
-			_survival = {
-				songDifficulties: [],
-				songNames: []
-			}
-			#end
 		}
 	
 	public static function saveCurrent()
@@ -320,18 +304,12 @@ class MenuSurvival extends MusicBeatState
 				songDifficulties: PlayState.difficultyPlaylist,
 				songNames: PlayState.storyPlaylist
 			}
-			#if sys
-			File.saveContent(('presets/survival/current'), Json.stringify(_survival, null, '    '));
-			#end
+			_db.set('current_survival', Json.stringify(_survival));
 		}
 	
 	public static function loadPreset(input:String):Void
 		{
-			#if sys
-			var data:String = File.getContent('presets/survival/' + input);
-			_survival = Json.parse(data);
-			#end
-	
+			_survival = Json.parse(_db.get('${input}_survival'));
 			PlayState.difficultyPlaylist = _survival.songDifficulties;
 			PlayState.storyPlaylist = _survival.songNames;
 	
@@ -344,9 +322,10 @@ class MenuSurvival extends MusicBeatState
 				songDifficulties: PlayState.difficultyPlaylist,
 				songNames: PlayState.storyPlaylist
 			}
-			#if sys
-			File.saveContent(('presets/survival/' + input), Json.stringify(_survival, null, '    ')); // just an example for now
-			#end
+			_db.set('${input}_survival', Json.stringify(_survival));
+			if (Survival_Substate.presets.indexOf(input) == -1)
+				Survival_Substate.presets.push(input);
+			_db.set('savedPresets_survival', Survival_Substate.presets);
 		}
 }
 

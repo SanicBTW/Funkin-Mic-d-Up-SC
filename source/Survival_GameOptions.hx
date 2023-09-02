@@ -1,10 +1,6 @@
 package;
 
 import haxe.Json;
-#if sys
-import sys.io.File;
-import sys.FileSystem;
-#end
 import flixel.util.FlxTimer;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -16,6 +12,7 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import MainVariables._variables;
+import ModifierVariables._db;
 
 using StringTools;
 
@@ -322,29 +319,10 @@ class Survival_GameOptions extends MusicBeatSubstate
 
     public static function load()
     {
-        #if sys
-        if (!FileSystem.isDirectory('presets'))
-            FileSystem.createDirectory('presets');
-
-        if (!FileSystem.exists('presets/survival_options'))
-            {
-                _survivalVars = {
-                    timePercentage: 60,
-                    carryTime: true,
-                    addTimeMultiplier: 1,
-                    subtractTimeMultiplier: 1,
-                    addSongTimeToCurrentTime: true
-                };
-
-                File.saveContent(('presets/survival_options'), Json.stringify(_survivalVars, null, '    '));
-            }
+        if (_db.get('survival_options') != null)
+            _survivalVars = Json.parse(_db.get('survival_options'));
         else
-            {
-                var data:String = File.getContent('presets/survival_options');
-                _survivalVars = Json.parse(data);
-            }
-            #else
-            // defaults
+        {
             _survivalVars = {
                 timePercentage: 60,
                 carryTime: true,
@@ -352,13 +330,12 @@ class Survival_GameOptions extends MusicBeatSubstate
                 subtractTimeMultiplier: 1,
                 addSongTimeToCurrentTime: true
             };
-            #end
+            _db.set('survival_options', Json.stringify(_survivalVars));
+        }
     }
 
     public static function save()
-        {
-            #if sys
-            File.saveContent(('presets/survival_options'), Json.stringify(_survivalVars, null, '    '));
-            #end
-        }
+    {
+        _db.set('survival_options', Json.stringify(_survivalVars));
+    }
 }

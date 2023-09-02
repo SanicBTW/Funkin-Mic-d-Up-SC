@@ -1,10 +1,6 @@
 package;
 
 import haxe.Json;
-#if sys
-import sys.io.File;
-import sys.FileSystem;
-#end
 import flixel.util.FlxTimer;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -16,6 +12,7 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import MainVariables._variables;
+import ModifierVariables._db;
 
 using StringTools;
 
@@ -310,26 +307,15 @@ class Endless_Substate extends MusicBeatSubstate
 
     public static function loadCurrent(songTitle:String, difficulty:Int)
     {
-        #if sys
-        if (!FileSystem.isDirectory('presets/endless'))
-            FileSystem.createDirectory('presets/endless');
-
-        if (!FileSystem.exists('presets/endless/'+songTitle+'_'+difficulty))
-            {
-                File.saveContent(('presets/endless/'+songTitle+'_'+difficulty), Json.stringify(_endless, null, '    '));
-            }
+        var name:String = 'current_endless-${songTitle}_$difficulty';
+        if (_db.get(name) != null)
+            _endless = Json.parse(_db.get(name));
         else
-            {
-                var data:String = File.getContent('presets/endless/'+songTitle+'_'+difficulty);
-                _endless = Json.parse(data);
-            }
-        #end
+            _db.set(name, Json.stringify(_endless));
     }
 
     public static function saveCurrent(songTitle:String, difficulty:Int)
-        {
-            #if sys
-            File.saveContent(('presets/endless/'+songTitle+'_'+difficulty), Json.stringify(_endless, null, '    '));
-            #end
-        }
+    {
+        _db.set('current_endless-${songTitle}_$difficulty', Json.stringify(_endless));
+    }
 }
